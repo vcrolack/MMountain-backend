@@ -4,6 +4,12 @@ logs
 
 PD: En un rato linkearé lo que es amongus DB
 
+para abrir el server:
+npm run dev
+
+para acceder al localhost:
+http://localhost:3500
+
 Instalé estas librerias hasta el momento:
 
 1. `npm i express`: Este comando instala Express, un marco de aplicación web para Node.js que proporciona una serie de características robustas para las aplicaciones web y móviles. 
