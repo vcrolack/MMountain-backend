@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vcrolack/MMountain-backend.git"
+    "url": "https://github.com/vcrolack/MMountain-backend.git"
   },
   "author": "Cristensen y Rolack",
   "license": "ISC",
@@ -18,13 +18,19 @@
   },
   "homepage": "https://github.com/vcrolack/MMountain-backend#readme",
   "dependencies": {
+    "@hapi/boom": "^10.0.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "mongoose": "^7.1.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.22"
   }
 }
