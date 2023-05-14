@@ -9,7 +9,7 @@ const corsOptions = { // define un objeto de opciones de CORS
         }
     },
     credentials: true, // indica que se deben incluir cookies y encabezados de autenticación en las solicitudes CORS
-    optionsSuccessStatus: 200 // establece el código de estado HTTP para las respuestas preflight OPTIONS a 200
+    optionsSuccessStatus: 200 // establece el código de estado HTTP para las respuestas preflight OPTIONS a 200, smart TV y algunos browsers tienen problemas con el success status 204
 }
 
 module.exports = corsOptions // exporta el objeto de opciones de CORS para que se pueda utilizar en otros archivos
