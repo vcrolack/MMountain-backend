@@ -129,6 +129,44 @@ const updateUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const updatePassword = expressAsyncHandler(async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({
+      code: '401',
+      message: 'No autorizado',
+    })
+  }
+
+  const token = authHeader.split(' ')[1];
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+  } catch (error) {
+    res.status(401).json({
+      code: 401,
+      message: 'No autorizado',
+    })
+  }
+
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.password = req.body.newPassword;
+    await user.save()
+
+    res.json({
+      code: 200,
+      message: 'Contraseña actualizada',
+    })
+  } else {
+    res.status(401).json({
+      code: 401,
+      message: 'No autorizado',
+    })
+  }
+});
+
 const deleteUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -169,6 +207,7 @@ module.exports = {
   getUser,
   createNewUser,
   updateUser,
+  updatePassword,
   deleteUser,
   authUser,
 };
