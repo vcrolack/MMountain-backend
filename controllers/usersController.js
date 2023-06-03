@@ -1,11 +1,8 @@
 const User = require('../models/user');
+const { generateToken } = require('../controllers/commonController');
 const expressAsyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-};
 
 const getAllUsers = expressAsyncHandler(async (req, res) => {
   const users = await User.find({}).select('-password');
