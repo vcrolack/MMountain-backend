@@ -133,8 +133,13 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    await user.remove();
-    res.json({ message: 'Usuario eliminado' });
+    user.deleted_at = new Date();
+    await user.save();
+
+    res.json({
+      id: req.params.id,
+      message: 'Usuario eliminado',
+    });
   } else {
     res.status(404);
     throw new Error('Usuario no encontrado');
