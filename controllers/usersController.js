@@ -12,12 +12,25 @@ const getAllUsers = expressAsyncHandler(async (req, res) => {
   res.json(users);
 });
 
+const getUser = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password');
+  if (!user) {
+    res.status(400).json({
+      code: 400,
+      message: 'Usuario no encontrado',
+    });
+  }
+  res.json(user);
+});
+
 const createNewUser = expressAsyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email: req.body.email });
 
   if (userExists) {
-    res.status(400);
-    throw new Error('Usuario ya existe');
+    res.status(400).res({
+      code: 400,
+      message: 'El usuario ya existe',
+    });
   }
 
   const user = await User.create({
@@ -31,7 +44,7 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
       region: req.body.address.region,
       zip: req.body.address.zip,
       houseOrDept: req.body.address.houseOrDept,
-      numberDept: req.body.address.numberDept
+      numberDept: req.body.address.numberDept,
     },
     role: req.body.role,
     birthdate: req.body.birthdate,
@@ -40,7 +53,7 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
     img: req.body.img,
     create_at: Date.now(),
     updated_at: null,
-    deleted_at: null
+    deleted_at: null,
   });
 
   if (user) {
@@ -66,7 +79,6 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-
 const updateUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -78,8 +90,10 @@ const updateUser = expressAsyncHandler(async (req, res) => {
     user.address.state = req.body.address?.state || user.address.state;
     user.address.region = req.body.address?.region || user.address.region;
     user.address.zip = req.body.address?.zip || user.address.zip;
-    user.address.houseOrDept = req.body.address?.houseOrDept || user.address.houseOrDept;
-    user.address.numberDept = req.body.address?.numberDept || user.address.numberDept;
+    user.address.houseOrDept =
+      req.body.address?.houseOrDept || user.address.houseOrDept;
+    user.address.numberDept =
+      req.body.address?.numberDept || user.address.numberDept;
     user.role = req.body.role || user.role;
     user.birthdate = req.body.birthdate || user.birthdate;
     user.gender = req.body.gender || user.gender;
@@ -87,7 +101,7 @@ const updateUser = expressAsyncHandler(async (req, res) => {
     user.img = req.body.img || user.img;
     user.updated_at = Date.now();
 
-    if(req.body.password) {
+    if (req.body.password) {
       user.password = bcrypt.hashSync(req.body.password, 10);
     }
 
@@ -127,8 +141,6 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-
-
 const authUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -149,7 +161,9 @@ const authUser = expressAsyncHandler(async (req, res) => {
 
 module.exports = {
   getAllUsers,
+  getUser,
   createNewUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  authUser,
 };
