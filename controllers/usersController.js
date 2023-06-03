@@ -27,7 +27,7 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email: req.body.email });
 
   if (userExists) {
-    res.status(400).res({
+    res.status(400).json({
       code: 400,
       message: 'El usuario ya existe',
     });
