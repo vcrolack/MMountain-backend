@@ -56,6 +56,8 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
     deleted_at: null,
   });
 
+  const authToken = generateToken(user._id);
+
   if (user) {
     res.status(201).json({
       _id: user._id,
@@ -71,7 +73,14 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
       create_at: user.create_at,
       updated_at: user.updated_at,
       deleted_at: user.deleted_at,
-      token: generateToken(user._id),
+      token: authToken,
+    });
+
+    res.cookie('token', authToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
     });
   } else {
     res.status(400);
@@ -135,35 +144,35 @@ const updatePassword = expressAsyncHandler(async (req, res) => {
     res.status(401).json({
       code: '401',
       message: 'No autorizado',
-    })
+    });
   }
 
   const token = authHeader.split(' ')[1];
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     res.status(401).json({
       code: 401,
       message: 'No autorizado',
-    })
+    });
   }
 
   const user = await User.findById(req.params.id);
 
   if (user) {
     user.password = req.body.newPassword;
-    await user.save()
+    await user.save();
 
     res.json({
       code: 200,
       message: 'Contraseña actualizada',
-    })
+    });
   } else {
     res.status(401).json({
       code: 401,
       message: 'No autorizado',
-    })
+    });
   }
 });
 
