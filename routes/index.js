@@ -3,6 +3,7 @@ const path = require('path');
 const usersRouter = require('./userRoutes');
 const commonRouter = require('./commonRoutes');
 const rootRouter = require('./root');
+const customerRouter = require('./customerRoutes');
 
 const routerApi = (app) => {
   const router = express.Router();
@@ -10,6 +11,7 @@ const routerApi = (app) => {
   router.use('/users', usersRouter);
   router.use('/common', commonRouter);
   router.use('/', rootRouter);
+  router.use('/', customerRouter);
   router.use('/', express.static(path.join(__dirname, 'public')));
 
   router.all('*', (req, res) => {

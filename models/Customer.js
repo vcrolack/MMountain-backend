@@ -70,11 +70,23 @@ const CustomerSchema = new mongoose.Schema({
       enum: ['yoga', 'pilates', 'HIIT', 'bodyweight training'],
       default: null,
     },
-    watersports: {
+    waterSports: {
       type: [String],
       enum: ['natación', 'surf', 'kayak', 'buceo'],
       default: null,
     },
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  },
+  deleted_at: {
+    type: Date,
+    default: null
   },
 });
 
