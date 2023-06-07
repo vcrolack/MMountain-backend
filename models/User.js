@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['superuser', 'maintainer', 'client'],
+    enum: ['superuser', 'maintainer', 'customer'],
   },
   img: {
     type: String,
