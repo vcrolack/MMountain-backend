@@ -177,7 +177,7 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    user.deleted_at = new Date();
+    user.deleted_at = Date.now();
     await user.save();
 
     res.json({
