@@ -1,5 +1,4 @@
 const Customer = require('../models/Customer');
-const { generateToken } = require('../controllers/commonController');
 const expressAsyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 

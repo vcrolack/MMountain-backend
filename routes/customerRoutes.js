@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const customersController = require('../controllers/commonController');
+const customersController = require('../controllers/customersController');
 
 router.route('/')
-  .get(customersController.getCustomers)
+  .get(customersController.getAllCustomers)
   .post(customersController.createCustomer)
 
 router.route('/:id')
