@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { generateToken } = require('../controllers/commonController');
+const { generateToken } = require('../utils/utils');
 const expressAsyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -53,7 +53,7 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
     deleted_at: null,
   });
 
-  const authToken = generateToken(user._id);
+  const authToken = generateToken(user._id, user.role);
 
   if (user) {
     res.status(201).json({
@@ -127,7 +127,6 @@ const updateUser = expressAsyncHandler(async (req, res) => {
       create_at: updatedUser.create_at,
       updated_at: updatedUser.updated_at,
       deleted_at: updatedUser.deleted_at,
-      token: generateToken(updatedUser._id),
     });
   } else {
     res.status(404);
@@ -190,32 +189,6 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-const authUser = expressAsyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (user && (await bcrypt.compare(password, user.password))) {
-    const authToken = generateToken(user._id);
-
-    res.cookie('token', authToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000,
-    })
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: authToken,
-    });
-  } else {
-    res.status(401);
-    throw new Error('Email o contraseña inválida');
-  }
-});
 
 module.exports = {
   getAllUsers,
@@ -224,5 +197,4 @@ module.exports = {
   updateUser,
   updatePassword,
   deleteUser,
-  authUser,
 };
