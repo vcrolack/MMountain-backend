@@ -3,7 +3,7 @@ const expressAsyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 
 const getAllCustomers = expressAsyncHandler(async (req, res) => {
-  const token = req.headers.authorization;
+  const token = req.cookies.token;
   if (!token || !token.startsWith('Bearer ')) {
     res.status(401).json({
       code: 401,
@@ -24,7 +24,7 @@ const getAllCustomers = expressAsyncHandler(async (req, res) => {
 });
 
 const getCustomer = expressAsyncHandler(async (req, res) => {
-  const token = req.headers.authorization;
+  const token = req.cookies.token;
   if (!token || !token.startsWith('Bearer ')) {
     res.status(401).json({
       code: 401,
@@ -45,7 +45,7 @@ const getCustomer = expressAsyncHandler(async (req, res) => {
 });
 
 const createCustomer = expressAsyncHandler(async (req, res) => {
-  const token = req.headers.authorization;
+  const token = req.cookies.token;
   if (!token || !token.startsWith('Bearer ')) {
     res.status(401).json({
       code: 401,
@@ -75,7 +75,7 @@ const createCustomer = expressAsyncHandler(async (req, res) => {
 });
 
 const updateCustomer = expressAsyncHandler(async (req, res) => {
-  const token = req.headers.authorization;
+  const token = req.cookies.token;
   if (!token || !token.startsWith('Bearer ')) {
     return res.status(401).json({
       code: 401,
@@ -135,7 +135,7 @@ const updateCustomer = expressAsyncHandler(async (req, res) => {
 });
 
 const deleteCustomer = expressAsyncHandler(async (req, res) => {
-  const token = req.headers.authorization;
+  const token = req.cookies.token;
   if (!token || !token.startsWith('Bearer ')) {
     return res.status(401).json({
       code: 401,
