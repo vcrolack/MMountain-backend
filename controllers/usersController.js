@@ -135,7 +135,7 @@ const updateUser = expressAsyncHandler(async (req, res) => {
 });
 
 const updatePassword = expressAsyncHandler(async (req, res) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.cookies.token;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     res.status(401).json({
       code: '401',
