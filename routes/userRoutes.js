@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
+const { verifyToken } = require('../middleware/verifyToken');
+const {verifyRole} = require('../middleware/verifyRole');
 
 router.route('/')
-  .get(usersController.getUser)
-  .post(usersController.createNewUser)
+  .get(verifyToken, verifyRole(['maintainer', 'superuser']), usersController.getAllUsers)
+  .post(verifyToken, verifyRole(['superuser', 'maintainer']), usersController.createNewUser)
 
 router.route('/:id')
-  .get(usersController.getUser)
-  .patch(usersController.updateUser)
-  .delete(usersController.deleteUser);
+  .get(verifyToken, verifyRole(['maintainer', 'superuser']), usersController.getUser)
+  .patch(verifyToken, verifyRole(['maintainer', 'superuser']),usersController.updateUser)
+  .delete(verifyToken, verifyRole(['maintainer', 'superuser']), usersController.deleteUser);
 
-router.patch('/:id/password', usersController.updatePassword);
+router.patch('/:id/password', verifyToken, verifyRole(['customer']), usersController.updatePassword);
 
 module.exports = router;

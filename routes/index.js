@@ -5,6 +5,7 @@ const rootRouter = require('./root');
 const customerRouter = require('./customerRoutes');
 const authRouter = require('./authRoutes');
 
+
 const routerApi = (app) => {
   const router = express.Router();
   app.use('/api/v1', router);
