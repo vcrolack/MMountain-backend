@@ -2,7 +2,6 @@ const User = require('../models/user');
 const { generateToken } = require('../utils/utils');
 const expressAsyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 const getAllUsers = expressAsyncHandler(async (req, res) => {
   const users = await User.find({}).select('-password');
@@ -30,48 +29,20 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
     });
   }
 
-  const user = await User.create({
-    name: req.body.name,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 10),
-    address: {
-      address: req.body.address.address,
-      state: req.body.address.state,
-      region: req.body.address.region,
-      zip: req.body.address.zip,
-      houseOrDept: req.body.address.houseOrDept,
-      numberDept: req.body.address.numberDept,
-    },
-    role: req.body.role,
-    birthdate: req.body.birthdate,
-    gender: req.body.gender,
-    sports: req.body.sports,
-    img: req.body.img,
-    create_at: Date.now(),
-    updated_at: null,
-    deleted_at: null,
-  });
-
-  const authToken = generateToken(user._id, user.role);
-
-  if (user) {
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email,
-      address: user.address,
-      role: user.role,
-      birthdate: user.birthdate,
-      gender: user.gender,
-      sports: user.sports,
-      img: user.img,
-      create_at: user.create_at,
-      updated_at: user.updated_at,
-      deleted_at: user.deleted_at,
-      token: authToken,
+  try {
+    const user = await User.create({
+      name: req.body.name,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      role: req.body.role,
+      password: bcrypt.hashSync(req.body.password, 10),
+      created_at: Date.now(),
+      updated_at: null,
+      deleted_at: null,
+      client: req.body.client || null,
     });
+
+    const authToken = generateToken(user._id, user.role);
 
     res.cookie('token', authToken, {
       httpOnly: true,
@@ -79,9 +50,22 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
-  } else {
-    res.status(400);
-    throw new Error('Datos inválidos');
+
+    if (user) {
+      res.status(201).json({
+        ...user,
+        token: authToken,
+      });
+    } else {
+      res.status(400);
+      throw new Error('Datos inválidos');
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error al crear el usuario',
+      error: error.message,
+    });
   }
 });
 
@@ -114,19 +98,7 @@ const updateUser = expressAsyncHandler(async (req, res) => {
     const updatedUser = await user.save();
 
     res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      lastname: updatedUser.lastname,
-      email: updatedUser.email,
-      address: updatedUser.address,
-      role: updatedUser.role,
-      birthdate: updatedUser.birthdate,
-      gender: updatedUser.gender,
-      sports: updatedUser.sports,
-      img: updatedUser.img,
-      create_at: updatedUser.create_at,
-      updated_at: updatedUser.updated_at,
-      deleted_at: updatedUser.deleted_at,
+      updatedUser
     });
   } else {
     res.status(404);
@@ -135,24 +107,6 @@ const updateUser = expressAsyncHandler(async (req, res) => {
 });
 
 const updatePassword = expressAsyncHandler(async (req, res) => {
-  const authHeader = req.cookies.token;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({
-      code: '401',
-      message: 'No autorizado',
-    });
-  }
-
-  const token = authHeader.split(' ')[1];
-  let decodedToken;
-  try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    res.status(401).json({
-      code: 401,
-      message: 'No autorizado',
-    });
-  }
 
   const user = await User.findById(req.params.id);
 
@@ -188,7 +142,6 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
     throw new Error('Usuario no encontrado');
   }
 });
-
 
 module.exports = {
   getAllUsers,
