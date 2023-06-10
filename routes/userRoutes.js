@@ -7,7 +7,7 @@ const {verifyRole} = require('../middleware/verifyRole');
 /* RUTAS PARA SUPERUSER Y MAINTAINER */
 router.route('/')
   .get(verifyToken, verifyRole(['maintainer', 'superuser']), usersController.getAllUsers)
-  .post(verifyToken, verifyRole(['superuser', 'maintainer']), usersController.createNewUser)
+  .post(verifyToken, verifyRole(['superuser', 'maintainer']), usersController.createNewUser);
 
 router.route('/:id')
   .get(verifyToken, verifyRole(['maintainer', 'superuser']), usersController.getUser)
@@ -18,7 +18,7 @@ router.route('/:id')
 router.patch('/customer/:id/password', verifyToken, verifyRole(['customer']), usersController.updatePassword);
 
 router.route('/customer/profile/:id')
-  .get(verifyToken, verifyRole(['superuser', 'maintainer', 'customer']), /* crear controlador */)
-  .patch(verifyToken, verifyRole(['superuser', 'maintainer', 'customer']), /* crear controlador */)
+  .get(verifyToken, verifyRole(['superuser', 'maintainer', 'customer']), usersController.showProfile)
+  .patch(verifyToken, verifyRole(['superuser', 'maintainer', 'customer']), usersController.updateProfile);
 
 module.exports = router;
