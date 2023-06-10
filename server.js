@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -9,6 +10,9 @@ const connectDB = require('./config/dbConn');
 const corsOptions = require('./config/corsOptions');
 const routerApi = require('./routes/index');
 const { verifyToken } = require('./middleware/verifyToken');
+const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+
 
 require('dotenv').config();
 
@@ -24,6 +28,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(verifyToken());
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+
 
 routerApi(app);
 
