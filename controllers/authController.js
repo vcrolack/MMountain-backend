@@ -45,7 +45,26 @@ const validateToken = expressAsyncHandler(async (req, res) => {
   res.json(decoded);
 });
 
+const newToken = expressAsyncHandler(async (req, res) => {
+  const role = req.body.role;
+  const id = req.body.id;
+  try {
+    const authToken = generateToken(id, role);
+    res.status(201).json({
+      code: 202,
+      message: 'Token generado',
+      token: authToken,
+    });
+  } catch (error) {
+    res.status(400).json({
+      code: 400,
+      message: 'No se ha podido generar el token',
+    });
+  }
+});
+
 module.exports = {
   authUser,
   validateToken,
+  newToken,
 };
