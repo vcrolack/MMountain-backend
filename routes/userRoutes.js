@@ -15,9 +15,9 @@ router.route('/:id')
   .delete(verifyToken, verifyRole(['maintainer', 'superuser']), usersController.deleteUser);
 
 /* RUTAS PARA CUSTOMER */
-router.patch('/:id/password', verifyToken, verifyRole(['customer']), usersController.updatePassword);
+router.patch('/customer/:id/password', verifyToken, verifyRole(['customer']), usersController.updatePassword);
 
-router.route('/customer/profile')
+router.route('/customer/profile/:id')
   .get(verifyToken, verifyRole(['superuser', 'maintainer', 'customer']), /* crear controlador */)
   .patch(verifyToken, verifyRole(['superuser', 'maintainer', 'customer']), /* crear controlador */)
 
