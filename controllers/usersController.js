@@ -98,31 +98,11 @@ const updateUser = expressAsyncHandler(async (req, res) => {
     const updatedUser = await user.save();
 
     res.json({
-      updatedUser
+      updatedUser,
     });
   } else {
     res.status(404);
     throw new Error('Usuario no encontrado');
-  }
-});
-
-const updatePassword = expressAsyncHandler(async (req, res) => {
-
-  const user = await User.findById(req.params.id);
-
-  if (user) {
-    user.password = req.body.newPassword;
-    await user.save();
-
-    res.json({
-      code: 200,
-      message: 'Contraseña actualizada',
-    });
-  } else {
-    res.status(401).json({
-      code: 401,
-      message: 'No autorizado',
-    });
   }
 });
 
@@ -143,6 +123,87 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
+/* CONTROLADORES PARA USO DE CUSTOMERS */
+const updatePassword = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.password = req.body.newPassword;
+    await user.save();
+
+    res.json({
+      code: 200,
+      message: 'Contraseña actualizada',
+    });
+  } else {
+    res.status(401).json({
+      code: 401,
+      message: 'No autorizado',
+    });
+  }
+});
+
+const showProfile = expressAsyncHandler(async (req, res) => {
+  let user;
+  try {
+    user = await User.findById(req.params.id).select('-password');
+    return res.status(200).json({
+      code: 200,
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
+  }
+});
+
+const updateProfile = expressAsyncHandler(async (req, res) => {
+  let user;
+  try {
+    user = await User.findById(req.params.id).select('-password');
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
+  }
+
+  if (user) {
+    user.client.address.address =
+      req.body.user.client.address.address || user.client.address.address;
+    user.client.address.state =
+      req.body.user.client.address.state || user.client.address.state;
+    user.client.address.region =
+      req.body.user.client.address.region || user.client.address.region;
+    user.client.address.zip =
+      req.body.user.client.address.zip || user.client.address.zip;
+    user.client.address.houseOrDept =
+      req.body.user.client.address.houseOrDept ||
+      user.client.address.houseOrDept;
+    user.client.address.numberDept =
+      req.body.user.client.user.client.address.numberDept ||
+      user.client.address.numberDept;
+    user.client.birthdate =
+      req.body.user.client.birthdate || user.client.birthdate;
+    user.client.gender = req.body.user.client.gender || user.client.gender;
+    user.client.sports.mountainSports =
+      req.body.user.client.sports.mountainSports ||
+      user.client.sports.mountainSports;
+    user.client.sports.waterSports =
+      req.body.user.client.sports.waterSports || user.client.sports.waterSports;
+    user.client.sports.snowSports =
+      req.body.user.client.sports.snowSports || user.client.sports.snowSports;
+    user.client.sports.inhouseSports =
+      req.body.user.client.sports.inhouseSports ||
+      user.client.sports.inhouseSports;
+    user.client.updated_at = Date.now();
+  }
+});
+
 module.exports = {
   getAllUsers,
   getUser,
@@ -150,4 +211,6 @@ module.exports = {
   updateUser,
   updatePassword,
   deleteUser,
+  showProfile,
+  updateProfile
 };
