@@ -12,7 +12,7 @@ const routerApi = (app) => {
   const router = express.Router();
   app.use('/api/v1', router);
   router.use('/users', usersRouter);
-  router.use('/customer', customerRouter);
+  router.use('/customers', customerRouter);
   router.use('/auth', authRouter);
   router.use('/categories', categoryRouter);
   router.use('/products', productRouter);
