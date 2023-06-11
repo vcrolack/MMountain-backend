@@ -10,9 +10,6 @@ const connectDB = require('./config/dbConn');
 const corsOptions = require('./config/corsOptions');
 const routerApi = require('./routes/index');
 const { verifyToken } = require('./middleware/verifyToken');
-const productRoutes = require('./routes/productRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
-
 
 require('dotenv').config();
 
@@ -28,9 +25,6 @@ connectDB();
 
 app.use(logger);
 app.use(cors(corsOptions));
-
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
 
 routerApi(app);
 
