@@ -4,8 +4,8 @@ const usersRouter = require('./userRoutes');
 const rootRouter = require('./root');
 const customerRouter = require('./customerRoutes');
 const authRouter = require('./authRoutes');
-const productRouter = require('./routes/productRoutes');
-const categoryRouter = require('./routes/categoryRoutes');
+const productRouter = require('./productRoutes');
+const categoryRouter = require('./categoryRoutes');
 
 
 const routerApi = (app) => {

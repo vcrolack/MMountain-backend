@@ -8,7 +8,7 @@ router.route('/login')
 router.route('/validate-token')
   .post(authController.validateToken)
 
-router.post('/generate-token')
+router.route('/generate-token')
   .post(authController.newToken);
 
 module.exports = router;
