@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 const { logEvents } = require('./logger') // importa la función logEvents del archivo logger.js
 
 const errorHandler = (err, req, res, next) => { // define una función middleware que maneja errores

@@ -14,49 +14,13 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  address: {
-    address: {
-      type: String,
-      required: true
-    },
-    state: {
-      type: String,
-      required: true
-    },
-    region: {
-      type: String,
-      required: true
-    },
-    zip: {
-      type: String,
-      required: true
-    },
-    houseOrDept: {
-      type: String,
-      required: true
-    },
-    numberDept: {
-      type: String,
-      required: true
-    }
-  },
   password: {
     type: String,
     required: true
   },
   role: {
     type: String,
-    enum: ['superuser', 'maintainer', 'client'],
-    default: 'client'
-  },
-  birthdate: {
-    type: Date,
-    required: true
-  },
-  gender: {
-    type: String,
-    enum: ['masculino', 'femenino', 'otro'],
-    required: true
+    enum: ['superuser', 'maintainer', 'customer'],
   },
   img: {
     type: String,
@@ -74,28 +38,11 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
-  sports: {
-    mountainSports: {
-      type: [String],
-      enum: ['mountain biking', 'rock climbing', 'hiking', 'trail running', 'trekking'],
-      default: undefined
-    },
-    snowSports: {
-      type: [String],
-      enum: ['skiing', 'snowboarding', 'snowshoeing', 'ice climbing'],
-      default: undefined
-    },
-    inhouseSports: {
-      type: [String],
-      enum: ['yoga', 'pilates', 'HIIT', 'bodyweight training'],
-      default: undefined
-    },
-    watersports: {
-      type: [String],
-      enum: ['natación', 'surf', 'kayak', 'buceo'],
-      default: undefined
-    }
-  }
+  customer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Customer',
+    sparse: true
+  },
 });
 
 UserSchema.pre('save', function(next) { // Este metodo es un middleware de Mongoose que se
