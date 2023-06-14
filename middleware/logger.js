@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { format } = require('date-fns') // para formatear la fecha y hora
 const { v4: uuid } = require('uuid') // para generar un identificador único
 const fs = require('fs') // para escribir en el sistema de archivos
