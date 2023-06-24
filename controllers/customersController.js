@@ -42,6 +42,7 @@ const createCustomer = expressAsyncHandler(async (req, res) => {
     return res.status(500).json({
       code: 500,
       message: 'No se ha podido crear el cliente',
+      error: error.message
     });
   }
 });

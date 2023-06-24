@@ -1,6 +1,10 @@
+const jwt = require('jsonwebtoken');
+
 const verifyRole = (allowedRoles) => {
   return (req, res, next) => {
-    const userRole = req.user.role;
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userRole = decoded.role;
 
     if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({

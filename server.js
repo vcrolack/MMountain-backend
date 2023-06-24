@@ -17,7 +17,6 @@ const PORT = process.env.PORT || 3500;
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.use(verifyToken);
 
 console.log(process.env.NODE_ENV);
 
@@ -27,6 +26,7 @@ app.use(logger);
 app.use(cors(corsOptions));
 
 routerApi(app);
+app.use(verifyToken);
 
 app.use(errorHandler);
 

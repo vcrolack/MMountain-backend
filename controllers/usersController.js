@@ -2,6 +2,7 @@ const User = require('../models/user');
 const { generateToken } = require('../utils/utils');
 const expressAsyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const getAllUsers = expressAsyncHandler(async (req, res) => {
   const users = await User.find({}).select('-password');
@@ -39,7 +40,7 @@ const createNewUser = expressAsyncHandler(async (req, res) => {
       created_at: Date.now(),
       updated_at: null,
       deleted_at: null,
-      client: req.body.client || null,
+      customer: req.body.customer || null,
     });
 
     const authToken = generateToken(user._id, user.role);
@@ -76,14 +77,8 @@ const updateUser = expressAsyncHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.lastname = req.body.lastname || user.lastname;
     user.email = req.body.email || user.email;
-    user.address.address = req.body.address?.address || user.address.address;
-    user.address.state = req.body.address?.state || user.address.state;
-    user.address.region = req.body.address?.region || user.address.region;
-    user.address.zip = req.body.address?.zip || user.address.zip;
-    user.address.houseOrDept =
-      req.body.address?.houseOrDept || user.address.houseOrDept;
-    user.address.numberDept =
-      req.body.address?.numberDept || user.address.numberDept;
+    user.customer = req.body.customer || user.customer;
+    user.address = req.body.address || user.address;
     user.role = req.body.role || user.role;
     user.birthdate = req.body.birthdate || user.birthdate;
     user.gender = req.body.gender || user.gender;
@@ -125,27 +120,67 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
 
 /* CONTROLADORES PARA USO DE CUSTOMERS */
 const updatePassword = expressAsyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const token = req.cookies.token;
+  const requestedId = req.params.id;
 
-  if (user) {
-    user.password = req.body.newPassword;
-    await user.save();
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
 
-    res.json({
-      code: 200,
-      message: 'Contraseña actualizada',
-    });
-  } else {
-    res.status(401).json({
-      code: 401,
-      message: 'No autorizado',
+    if (userId !== requestedId) {
+      return res.status(401).json({
+        code: 401,
+        message: 'No autorizado',
+      });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.password = bcrypt.hashSync(req.body.newPassword, 10);
+      try {
+        await user.save();
+        res.json({
+          code: 200,
+          message: 'Contraseña actualizada',
+        });
+      } catch (error) {
+        res.status(500).json({
+          code: 500,
+          message: 'Ha ocurrido un error al actualizar el usuario',
+          error: error.message,
+        });
+      }
+    } else {
+      res.status(401).json({
+        code: 401,
+        message: 'No autorizado',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
     });
   }
 });
 
 const showProfile = expressAsyncHandler(async (req, res) => {
   let user;
+  const token = req.cookies.token;
+  const requestedId = req.params.id;
+
   try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    if (userId !== requestedId) {
+      return res.status(401).json({
+        code: 401,
+        message: 'No autorizado',
+      });
+    }
+
     user = await User.findById(req.params.id).select('-password');
     return res.status(200).json({
       code: 200,
@@ -162,45 +197,50 @@ const showProfile = expressAsyncHandler(async (req, res) => {
 
 const updateProfile = expressAsyncHandler(async (req, res) => {
   let user;
+  const token = req.cookies.token;
+  const requestedId = req.params.id;
+
   try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    if (userId !== requestedId) {
+      return res.status(401).json({
+        code: 401,
+        message: 'No autorizado',
+      });
+    }
+
     user = await User.findById(req.params.id).select('-password');
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.lastname = req.body.lastname || user.lastname;
+      user.customer = req.body.customer;
+      user.customer.updated_at = Date.now();
+    }
+
+    try {
+      const updatedUser = await user.save();
+
+      return res.status(200).json({
+        code: 200,
+        data: updatedUser,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        message: 'Ha ocurrido un error',
+        error: error.message,
+      });
+    }
+
   } catch (error) {
     return res.status(500).json({
       code: 500,
       message: 'Ha ocurrido un error',
       error: error.message,
     });
-  }
-
-  if (user) {
-    user.client.address.address =
-      req.body.user.client.address.address || user.client.address.address;
-    user.client.address.state =
-      req.body.user.client.address.state || user.client.address.state;
-    user.client.address.region =
-      req.body.user.client.address.region || user.client.address.region;
-    user.client.address.zip =
-      req.body.user.client.address.zip || user.client.address.zip;
-    user.client.address.houseOrDept =
-      req.body.user.client.address.houseOrDept ||
-      user.client.address.houseOrDept;
-    user.client.address.numberDept =
-      req.body.user.client.user.client.address.numberDept ||
-      user.client.address.numberDept;
-    user.client.birthdate =
-      req.body.user.client.birthdate || user.client.birthdate;
-    user.client.gender = req.body.user.client.gender || user.client.gender;
-    user.client.sports.mountainSports =
-      req.body.user.client.sports.mountainSports ||
-      user.client.sports.mountainSports;
-    user.client.sports.waterSports =
-      req.body.user.client.sports.waterSports || user.client.sports.waterSports;
-    user.client.sports.snowSports =
-      req.body.user.client.sports.snowSports || user.client.sports.snowSports;
-    user.client.sports.inhouseSports =
-      req.body.user.client.sports.inhouseSports ||
-      user.client.sports.inhouseSports;
-    user.client.updated_at = Date.now();
   }
 });
 
@@ -212,5 +252,5 @@ module.exports = {
   updatePassword,
   deleteUser,
   showProfile,
-  updateProfile
+  updateProfile,
 };
