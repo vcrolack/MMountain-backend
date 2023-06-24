@@ -10,6 +10,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
+    console.log(user)
     const authToken = generateToken(user._id, user.role);
 
     res.cookie('token', authToken, {

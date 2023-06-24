@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema({
     default: null
   },
   customer: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.Mixed,
     ref: 'Customer',
     sparse: true
   },
