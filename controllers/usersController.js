@@ -118,6 +118,38 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const restoreUser = expressAsyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: 'Usuario no encontrado',
+      });
+    }
+    if (user.deleted_at !== null) {
+      user.deleted_at = null;
+      await user.save();
+      res.json({
+        id: req.params.id,
+        message: 'Usuario restaurado',
+      });
+    } else {
+      res.status(400).json({
+        code: 400,
+        message: 'El usuario no está eliminado',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
+  }
+});
+
 /* CONTROLADORES PARA USO DE CUSTOMERS */
 const updatePassword = expressAsyncHandler(async (req, res) => {
   const token = req.cookies.token;
@@ -234,7 +266,6 @@ const updateProfile = expressAsyncHandler(async (req, res) => {
         error: error.message,
       });
     }
-
   } catch (error) {
     return res.status(500).json({
       code: 500,
@@ -251,6 +282,7 @@ module.exports = {
   updateUser,
   updatePassword,
   deleteUser,
+  restoreUser,
   showProfile,
   updateProfile,
 };
