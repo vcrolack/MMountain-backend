@@ -1,36 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct
-} = require('../controllers/productController');
+const productController = require('../controllers/productController');
+const { verifyRole } = require('../middleware/verifyRole');
+const { verifyToken } = require('../middleware/verifyToken');
 
-// @route   GET api/products
-// @desc    Get all products
-// @access  Public
-router.get('/', getAllProducts);
+router.route('/')
+  .get(productController.getAllProducts);
 
-// @route   GET api/products/:id
-// @desc    Get a product by ID
-// @access  Public
-router.get('/:id', getProductById);
+router.route('/:id')
+  .get(productController.getProductById);
 
-// @route   POST api/products
-// @desc    Create a product
-// @access  Private/Admin
-router.post('/', createProduct);
+router.route('/')
+  .post(verifyToken, verifyRole(['maintainer', 'superuser']), productController.createProduct);
 
-// @route   PUT api/products/:id
-// @desc    Update a product
-// @access  Private/Admin
-router.put('/:id', updateProduct);
-
-// @route   DELETE api/products/:id
-// @desc    Delete a product
-// @access  Private/Admin
-router.delete('/:id', deleteProduct);
+router.route('/:id')
+  .patch(verifyToken, verifyRole(['maintainer', 'superuser']), productController.updateProduct)
+  .delete(verifyToken, verifyRole(['maintainer', 'superuser']), productController.deleteProduct);
 
 module.exports = router;

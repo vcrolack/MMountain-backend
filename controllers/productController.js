@@ -2,17 +2,36 @@ const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 
 const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
-  res.json(products);
+  try {
+    const products = await Product.find({});
+    return res.status(200).json(products);
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
+  }
 });
 
 const getProductById = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (product) {
-    res.json(product);
-  } else {
-    res.status(404);
-    throw new Error('Producto no encontrado');
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        code: 404,
+        message: 'Producto no encontrado'
+      })
+    }
+
+    return res.status(200).json(product);
+  } catch(error) {
+    return res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
   }
 });
 
@@ -31,7 +50,7 @@ const createProduct = asyncHandler(async (req, res) => {
     model,
     color,
     recommended_age,
-    recommended_genre
+    recommended_genre,
   } = req.body;
 
   const product = new Product({
@@ -48,7 +67,7 @@ const createProduct = asyncHandler(async (req, res) => {
     model,
     color,
     recommended_age,
-    recommended_genre
+    recommended_genre,
   });
 
   const createdProduct = await product.save();
@@ -70,44 +89,61 @@ const updateProduct = asyncHandler(async (req, res) => {
     model,
     color,
     recommended_age,
-    recommended_genre
+    recommended_genre,
   } = req.body;
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      res.status(404).json({
+        code: 404,
+        message: 'Producto no encontrado'
+      });
+    } else {
+      product.dimensions = dimensions || product.dimensions;
+      product.name = name || product.name;
+      product.category_id = category_id || product.category_id;
+      product.description = description || product.description;
+      product.weight = weight || product.weight;
+      product.material = material || product.material;
+      product.price = price || product.price;
+      product.stock = stock || product.stock;
+      product.img = img || product.img;
+      product.fabricant = fabricant || product.fabricant;
+      product.model = model || product.model;
+      product.color = color || product.color;
+      product.recommended_age = recommended_age || product.recommended_age;
+      product.recommended_genre = recommended_genre || product.recommended_age;
 
-  const product = await Product.findById(req.params.id);
-
-  if (product) {
-    product.dimensions = dimensions;
-    product.name = name;
-    product.category_id = category_id;
-    product.description = description;
-    product.weight = weight;
-    product.material = material;
-    product.price = price;
-    product.stock = stock;
-    product.img = img;
-    product.fabricant = fabricant;
-    product.model = model;
-    product.color = color;
-    product.recommended_age = recommended_age;
-    product.recommended_genre = recommended_genre;
-
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
-  } else {
-    res.status(404);
-    throw new Error('Producto no encontrado');
+      const updatedProduct = await product.save();
+      res.json(updatedProduct);
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
   }
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
-
-  if (product) {
-    await product.remove();
-    res.json({ message: 'Producto removido' });
-  } else {
-    res.status(404);
-    throw new Error('Producto no encontrado');
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      res.status(404).json({
+        code: 404,
+        message: 'Producto no encontrado'
+      })
+    } else {
+      product.deleted_at = Date.now();
+      await product.save();
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message,
+    });
   }
 });
 
@@ -116,5 +152,5 @@ module.exports = {
   getProductById,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };
