@@ -26,7 +26,6 @@ app.use(logger);
 app.use(cors(corsOptions));
 
 routerApi(app);
-app.use(verifyToken);
 
 app.use(errorHandler);
 
