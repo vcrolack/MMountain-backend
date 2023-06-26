@@ -25,8 +25,8 @@ connectDB();
 app.use(logger);
 app.use(cors(corsOptions));
 
-app.use(verifyToken);
 routerApi(app);
+app.use(verifyToken);
 
 app.use(errorHandler);
 
