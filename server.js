@@ -9,7 +9,6 @@ const errorHandler = require('./middleware/errorHandler');
 const connectDB = require('./config/dbConn');
 const corsOptions = require('./config/corsOptions');
 const routerApi = require('./routes/index');
-const { verifyToken } = require('./middleware/verifyToken');
 
 require('dotenv').config();
 
@@ -26,7 +25,6 @@ app.use(logger);
 app.use(cors(corsOptions));
 
 routerApi(app);
-app.use(verifyToken);
 
 app.use(errorHandler);
 
