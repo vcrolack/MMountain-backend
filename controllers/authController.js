@@ -13,7 +13,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
     const authToken = generateToken(user._id, user.role);
 
     res.cookie('token', authToken, {
-      httpOnly: true,
+      httpOnly: false,
       secure: false,
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
