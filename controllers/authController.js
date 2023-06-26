@@ -1,8 +1,9 @@
-const User = require('../models/user');
-const bcrypt = require('bcrypt');
-const { generateToken } = require('../utils/utils');
 const expressAsyncHandler = require('express-async-handler');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+const User = require('../models/user');
+const { generateToken } = require('../utils/utils');
 
 const authUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
