@@ -11,9 +11,9 @@ const categoryRouter = require('./categoryRoutes');
 const routerApi = (app) => {
   const router = express.Router();
   app.use('/api/v1', router);
+  router.use('/auth', authRouter);
   router.use('/users', usersRouter);
   router.use('/customers', customerRouter);
-  router.use('/auth', authRouter);
   router.use('/categories', categoryRouter);
   router.use('/products', productRouter);
   router.use('/', rootRouter);
