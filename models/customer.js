@@ -48,6 +48,11 @@ const CustomerSchema = new mongoose.Schema({
     enum: ['masculino', 'femenino'],
     required: true,
   },
+  phone: {
+    type: String,
+    match: /^[0-9]{9}$/,
+    required: true,
+  },
   sports: {
     mountainSports: {
       type: [String],
