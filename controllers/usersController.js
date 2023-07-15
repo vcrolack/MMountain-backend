@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const { generateToken } = require('../utils/utils');
-const customer = require('../models/customer');
 
 const getAllUsers = expressAsyncHandler(async (req, res) => {
   try {
