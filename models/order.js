@@ -1,51 +1,61 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
+
+const { productSchema } = require('./product');
+
 const { Schema } = mongoose;
 
 const orderSchema = new Schema({
   orderNumber: {
-    type: Number,
-    default: () => Math.floor(Math.random() * 1000000), // Genera un número aleatorio
+    type: String,
+    default: uuidv4,
     required: true,
-    unique: true
+    unique: true,
   },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
   },
   status: {
     type: String,
-    required: true
+    required: true,
   },
   createdAt: {
     type: Date,
     default: Date.now,
-    required: true
+    required: true,
+  },
+  updatedAt: {
+    type: Date,
+    default: null,
+    required: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+    required: false,
   },
   total: {
     type: Number,
-    required: true
+    required: true,
   },
   address: {
-    type: Schema.Types.ObjectId,
-    ref: 'Customer.address',
-    required: true
+    type: String,
+    required: true,
   },
   city: {
-    type: Schema.Types.ObjectId,
-    ref: 'Customer.state',
-    required: true
+    type: String,
+    required: true,
   },
   region: {
-    type: Schema.Types.ObjectId,
-    ref: 'Customer.region',
-    required: true
+    type: String,
+    required: true,
   },
-  products: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  }]
+  products: {
+    type: [productSchema],
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('Order', orderSchema);
