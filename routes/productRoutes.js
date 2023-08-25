@@ -4,6 +4,9 @@ const productController = require('../controllers/productController');
 const { verifyRole } = require('../middleware/verifyRole');
 const { verifyToken } = require('../middleware/verifyToken');
 
+router.route('/products-with-stock')
+  .get(productController.getProductsWithStock);
+
 router.route('/')
   .get(productController.getAllProducts);
 
