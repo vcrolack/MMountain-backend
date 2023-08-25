@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/product');
+const expressAsyncHandler = require('express-async-handler');
 
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
@@ -147,10 +148,27 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
+const getProductsWithStock = expressAsyncHandler(async (req, res) => {
+  try {
+    const productsWithStock = await Product.find({stock: {$gt: 0}});
+    res.status(200).json({
+      code: 200,
+      data: productsWithStock
+    })
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      message: 'Ha ocurrido un error',
+      error: error.message
+    })
+  }
+})
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductsWithStock,
 };
