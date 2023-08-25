@@ -22,7 +22,7 @@ const categorySchema = new mongoose.Schema({
   },
   season: {
     type: String,
-    enum: ['primavera', 'verano', 'otoño', 'invierno'],
+    enum: ['primavera', 'verano', 'otoño', 'invierno', 'cualquier temporada'],
     required: true
   },
   places: {

@@ -81,6 +81,10 @@ const CustomerSchema = new mongoose.Schema({
       default: null,
     },
   },
+  orders: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+  }],
   created_at: {
     type: Date,
     default: Date.now

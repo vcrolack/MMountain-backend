@@ -44,18 +44,41 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
-  city: {
+  state: {
     type: String,
+    minlength: 2,
+    maxlength: 50,
     required: true,
   },
   region: {
     type: String,
+    minlength: 2,
+    maxlength:50,
+    required: true,
+  },
+  zip: {
+    type: String,
+    minlength: 4,
+    maxlength:15,
+    required: true,
+  },
+  houseOrDept: {
+    type: String,
+    minlength: 1,
+    maxlength: 15,
+    required: true,
+  },
+  numberDept: {
+    type: String,
+    minlength: 1,
+    maxlength: 15,
     required: true,
   },
   products: {
-    type: [productSchema],
+    type: [Schema.Types.ObjectId],
     required: true,
   },
+
 });
 
 module.exports = mongoose.model('Order', orderSchema);
